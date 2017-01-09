@@ -1,6 +1,7 @@
 package walter
 
 import (
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -12,5 +13,10 @@ func TestSSH(t *testing.T) {
 		User: "root",
 		Port: 2222,
 	}
-	SSH(config, "uptime")
+	responses := SSH(config, "whoami")
+	assert.Equal(t, responses[0].ip, "jackmuratore.com", "Should be jackmuratore.com")
+	assert.Equal(t, responses[0].stdout, "root", "Should output root")
+	assert.Equal(t, responses[0].stderr, "", "There should be no error")
+	assert.Equal(t, responses[0].errorCode, 0, "Should exit with 0")
+
 }

@@ -1,9 +1,5 @@
 package walter
 
-import (
-	"fmt"
-)
-
 type Config struct {
 	Pem  string
 	Ips  []string
@@ -11,6 +7,19 @@ type Config struct {
 	User string
 }
 
-func SSH(config *Config, command string) {
-	fmt.Println("This is SSH!")
+type Response struct {
+	ip        string
+	errorCode int
+	stderr    string
+	stdout    string
+}
+
+func SSH(config *Config, command string) (responses []*Response) {
+	response := &Response{
+		ip:        "fixme",
+		errorCode: 130,
+		stderr:    "fixme",
+		stdout:    "fixme",
+	}
+	return []*Response{response}
 }
