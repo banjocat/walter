@@ -1,6 +1,6 @@
 #### In development
 
-# Golang practice rp
+# Golang practice project
 
 Like all my practice projects I setup goals that I try to reach.
 
