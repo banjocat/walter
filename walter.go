@@ -1,5 +1,10 @@
 package walter
 
+import (
+	"golang.org/x/crypto/ssh"
+	"io/ioutil"
+)
+
 type Config struct {
 	Pem  string
 	Ips  []string
@@ -22,4 +27,22 @@ func SSH(config *Config, command string) (responses []*Response) {
 		stdout:    "fixme",
 	}
 	return []*Response{response}
+}
+
+func walterConfigToCyrptoConfig(config *Config) (*ssh.ClientConfig, error) {
+	key, err := ioutil.ReadFile(config.Pem)
+	if err != nil {
+		return nil, err
+	}
+	signer, err := ssh.ParsePrivateKey(key)
+	if err != nil {
+		return nil, err
+	}
+	clientConfig := &ssh.ClientConfig{
+		User: config.User,
+		Auth: []ssh.AuthMethod{
+			ssh.PublicKeys(signer),
+		},
+	}
+	return clientConfig, err
 }
