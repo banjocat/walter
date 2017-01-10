@@ -1,3 +1,6 @@
+/*
+Package walter implements a simple way to ssh multiple hosts at once
+*/
 package walter
 
 import (
@@ -5,6 +8,9 @@ import (
 	"io/ioutil"
 )
 
+/*
+Config is the struct used to setup an SSH request
+*/
 type Config struct {
 	Pem  string
 	Ips  []string
@@ -12,6 +18,9 @@ type Config struct {
 	User string
 }
 
+/*
+Response is the slice returned from SSH
+*/
 type Response struct {
 	ip        string
 	errorCode int
@@ -19,6 +28,9 @@ type Response struct {
 	stdout    string
 }
 
+/*
+SSH is the main endpoint to send ssh commands
+*/
 func SSH(config *Config, command string) (responses []*Response) {
 	response := &Response{
 		ip:        "fixme",
