@@ -45,46 +45,45 @@ func SSH(config *Config, command string) ([]*Response) {
     responses := make(chan *Response, len(config.Ips))
     for _, ip := range config.Ips {
 	wg.Add(1)
-	go func (clientConfig *ssh.ClientConfig, host string, port int, command string) {
-	    defer wg.Done()
-	    hostname := fmt.Sprintf("%s:%d", host, port)
-	    client, err := ssh.Dial("tcp", hostname, clientConfig)
-	    if err != nil {
-		log.Fatalf("Fatal client: %s", err)
-		return
-	    }
-	    session, err := client.NewSession()
-	    if err != nil {
-		log.Fatalf("Fatal session: %s", err)
-		return
-	    }
-	    defer session.Close()
-	    var stdout bytes.Buffer
-	    var stderr bytes.Buffer
-	    session.Stdout = &stdout
-	    session.Stderr = &stderr
-	    if err := session.Run(command); err != nil {
-		log.Fatalf("Fatal run: %s", err)
-		return
-	    }
-	    response := &Response {
-		ip: host,
-		stderr: strings.TrimSpace(stderr.String()),
-		stdout: strings.TrimSpace(stdout.String()),
-	    }
-	    log.Printf("%#v", response)
-	    responses <- response
-	}(clientConfig, ip, config.Port, command)
+	go runOneSSH(clientConfig, ip, config.Port, command, responses, &wg)
     }
     wg.Wait()
     close(responses)
-    log.Println("%d", len(responses))
     var response_slice []*Response
     for elem := range responses {
 	response_slice = append(response_slice, elem)
     }
-    log.Println("lol")
     return response_slice
+}
+
+func runOneSSH(clientConfig *ssh.ClientConfig, host string, port int, command string, responses chan <- *Response, wg *sync.WaitGroup) {
+    defer wg.Done()
+    hostname := fmt.Sprintf("%s:%d", host, port)
+    client, err := ssh.Dial("tcp", hostname, clientConfig)
+    if err != nil {
+	log.Fatalf("Fatal client: %s", err)
+	return
+    }
+    session, err := client.NewSession()
+    if err != nil {
+	log.Fatalf("Fatal session: %s", err)
+	return
+    }
+    defer session.Close()
+    var stdout bytes.Buffer
+    var stderr bytes.Buffer
+    session.Stdout = &stdout
+    session.Stderr = &stderr
+    if err := session.Run(command); err != nil {
+	log.Fatalf("Fatal run: %s", err)
+	return
+    }
+    response := &Response {
+	ip: host,
+	stderr: strings.TrimSpace(stderr.String()),
+	stdout: strings.TrimSpace(stdout.String()),
+    }
+    responses <- response
 }
 
 func walterConfigToCyrptoConfig(config *Config) (*ssh.ClientConfig, error) {
@@ -105,3 +104,4 @@ func walterConfigToCyrptoConfig(config *Config) (*ssh.ClientConfig, error) {
     }
     return clientConfig, nil
 }
+
