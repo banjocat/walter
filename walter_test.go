@@ -6,24 +6,27 @@ import (
 )
 
 func TestSSH(t *testing.T) {
-	ips := []string{"jackmuratore.com"}
+	ips := []string{"107.170.57.50"}
 	config := &Config{
-		Pem:  "~/.ssh/id_rsa",
+		Pem:  "/home/banjocat/.ssh/id_rsa",
 		Ips:  ips,
 		User: "root",
 		Port: 2222,
 	}
 	responses := SSH(config, "whoami")
+	assert.Equal(t, len(responses), 1, "Should find just 1 response")
+	if len(responses) != 1 {
+	    return
+	}
 	assert.Equal(t, responses[0].ip, "jackmuratore.com", "IP should be returned")
 	assert.Equal(t, responses[0].stdout, "root", "stdout should be result of command")
 	assert.Equal(t, responses[0].stderr, "", "Make sure there are no errors")
-	assert.Equal(t, responses[0].errorCode, 0, "Returns 0 if no error")
 }
 
 func TestMultipleSSH(t *testing.T) {
-	ips := []string{"jackmuratore.com", "jackmuratore.com", "jackmuratore.com"}
+	ips := []string{"107.170.57.50", "107.170.57.50", "107.170.57.50"}
 	config := &Config{
-		Pem:  "~/.ssh/id_rsa",
+		Pem:  "/home/banjocat/.ssh/id_rsa",
 		Ips:  ips,
 		User: "root",
 		Port: 2222,
@@ -35,6 +38,5 @@ func TestMultipleSSH(t *testing.T) {
 		assert.Equal(t, responses[i].ip, "jackmuratore.com", "IP should be returned")
 		assert.Equal(t, responses[i].stdout, "root", "stdout should be result of command")
 		assert.Equal(t, responses[i].stderr, "", "Make sure there are no errors")
-		assert.Equal(t, responses[i].errorCode, 0, "Returns 0 if no error")
 	}
 }
