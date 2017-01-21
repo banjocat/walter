@@ -76,3 +76,16 @@ func TestMultipleSSHwithDNS(t *testing.T) {
 		assert.Equal(t, responses[i].stderr, "", "Make sure there are no errors")
 	}
 }
+
+func TestAnError(t *testing.T) {
+	ips := []string{"107.170.57.50"}
+	config := &Config{
+		Pem:  "/home/banjocat/.ssh/id_rsa",
+		Ips:  ips,
+		User: "root",
+		Port: 2222,
+	}
+	responses := SSH(config, "oooo")
+	assert.Equal(t, 1, len(responses))
+	assert.Equal(t, responses[0].stderr, "oooo: command not found")
+}

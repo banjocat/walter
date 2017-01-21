@@ -31,6 +31,7 @@ type Response struct {
 	ip     string
 	stderr string
 	stdout string
+	errorCode int
 }
 
 /*
@@ -51,9 +52,9 @@ func SSH(config *Config, command string) []*Response {
 	close(responses)
 	var response_slice []*Response
 	for elem := range responses {
-	    if config.PrintOutput {
-		fmt.Printf("[%s] (%s) %s\n", elem.ip, command, elem.stdout)
-	    }
+		if config.PrintOutput {
+			fmt.Printf("[%s] (%s) %s\n", elem.ip, command, elem.stdout)
+		}
 		response_slice = append(response_slice, elem)
 	}
 	return response_slice
@@ -77,10 +78,7 @@ func runOneSSH(clientConfig *ssh.ClientConfig, host string, port int, command st
 	var stderr bytes.Buffer
 	session.Stdout = &stdout
 	session.Stderr = &stderr
-	if err := session.Run(command); err != nil {
-		log.Fatalf("Fatal run: %s", err)
-		return
-	}
+	session.Run(command)
 	response := &Response{
 		ip:     host,
 		stderr: strings.TrimSpace(stderr.String()),

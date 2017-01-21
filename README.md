@@ -14,6 +14,7 @@ Like all my practice projects I setup goals that I try to reach.
 * Output results of every SSH command to console. 
 * Use .ssh directory for default private keys but allow option to specify
 * Have functional tests
+* Create automating testing on push
 
 
 
