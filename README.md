@@ -5,8 +5,8 @@
 Like all my practice projects I setup goals that I try to reach.
 
 ## Goals
-* It should actually work
-* Create a simple SSH client
+* ~~It should actually work~~
+* ~~Create a simple SSH client~~
 * ~~Take an array of ip addresses~~
 * ~~Use goroutines to parallelize ssh commands~~
 * ~~Send results to channel that returns an array~~
